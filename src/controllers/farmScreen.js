@@ -13,6 +13,14 @@ export const executeFarmScreen = async() => {
     throw new Error("For some reason, the page content isn't loaded");
   }
 
+  awaitForRecaptcha()
+  .then(element => {
+    let audioElement = "<audio id='audio' autoplay><source src='http://protettordelinks.com/wp-content/baixar/bomba_relogio_alerta_www.toquesengracadosmp3.com.mp3' type='audio/mp3' /></audio>";
+
+    document.body.appendChild(audioElement);
+  })
+  .catch(error => console.log('nr'));
+
   const scriptStatus = new ScriptRunning();
   const controller = new FarmController(startExecution, pauseExecution);
   

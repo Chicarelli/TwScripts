@@ -1,10 +1,10 @@
-export const awaitForRecaptcha = async(secondsWaiting = 40) => {
+export const awaitForRecaptcha = (secondsWaiting = 40) => {
   return new Promise((resolve, reject) => {
     let seconds = 0;
 
     let timer = setInterval(() => {
 
-      let iframe = document.querySelector("#bot_check > div > iframe");
+      let iframe = document.querySelector("#bot_check");
       if (iframe) {
       }
 
