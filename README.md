@@ -1,0 +1,1 @@
+Um script desenvolvido com o propósito de estudo/prática.
