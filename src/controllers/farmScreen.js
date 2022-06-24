@@ -223,6 +223,93 @@ export const executeFarmScreen = async() => {
       return acc + totalResources;
     }, 0);
 
+    if (totalResources > 3500) {
+      console.log('new feature');
+      //add custom attack to farm all possible resources. 
+      let necessaryCavalry =  Math.floor((totalResources * 0.7) / 80); 
+
+
+
+      if (necessaryCavalry < 20) {
+        necessaryCavalry = 20;
+      }
+
+      row.children[11].children[0].click();
+      await awaitForSelector("#popup_box_popup_command");
+      
+      await delay(300);
+
+      const light = document.getElementById('units_entry_all_light').innerHTML.replace(/\D/g, '');
+      const spy = document.getElementById('units_entry_all_spy').innerHTML.replace(/\D/g, '');
+      const heavy = document.getElementById('units_entry_all_heavy').innerHTML.replace(/\D/g, '');
+
+
+      if (Number(heavy) > 20) {
+
+        let necessaryHeavy = Math.floor((totalResources * .7) / 50);
+
+        if (necessaryHeavy < 20) {
+          necessaryHeavy = 20;
+        }
+
+          const heavyToInput = heavy < necessaryHeavy ? heavy : necessaryHeavy;
+
+          const spyInput = document.getElementById('unit_input_spy');
+          const heavyInput = document.getElementById('unit_input_heavy');
+
+          if (Number(spy) >= 1) {
+            spyInput.value = 1;
+          }
+
+          heavyInput.value = Math.floor(heavyToInput);
+          await delay (300);
+
+          const attackButton = document.getElementById("target_attack");
+          attackButton.click();
+    
+          await delay(300);
+          
+          const confirmAttack = await awaitForSelector("#troop_confirm_submit");
+          confirmAttack.click();
+    
+          await awaitForSelectorToDisappear("#popup_box_popup_command");
+          await delay(100);
+          return;
+      }
+
+      if (Number(light) < Math.floor((necessaryCavalry / 2)) && light < 20) {
+        const closeButton = await awaitForSelector(".popup_box_close");
+        closeButton.click();
+        await delay(300)
+        return;
+      }
+
+      const lightToInput = light < necessaryCavalry ? light : necessaryCavalry;
+
+      const spyInput = document.getElementById('unit_input_spy');
+      const lightInput = document.getElementById('unit_input_light');
+
+      if ( spy >= 1 ) {
+        spyInput.value = 1;
+      } 
+
+      lightInput.value = Math.floor(lightToInput);
+
+      await delay (300);
+
+      const attackButton = document.getElementById("target_attack");
+      attackButton.click();
+
+      await delay(300);
+      
+      const confirmAttack = await awaitForSelector("#troop_confirm_submit");
+      confirmAttack.click();
+
+      await awaitForSelectorToDisappear("#popup_box_popup_command");
+      await delay(100);
+      return;
+    }
+
     if (totalResources > 1000) { // mandar B. Tem bastante recursos
       row.children[9].children[0].click();
       lightCavalryQuantity = lightCavalryQuantity - Number(lightCavalryOnB);
