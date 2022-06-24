@@ -19,7 +19,10 @@ export const executeFarmScreen = async() => {
 
     document.body.appendChild(audioElement);
   })
-  .catch(error => console.log('nr'));
+  .catch(error => {
+    console.log('nr')
+    window.location.reload();
+  });
 
   const scriptStatus = new ScriptRunning();
   const controller = new FarmController(startExecution, pauseExecution);
@@ -28,10 +31,9 @@ export const executeFarmScreen = async() => {
   let lightCavalryOnB;
 
   try {
-    lightCavalryOnA = await awaitForSelector("#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(2) > td:nth-child(8) > input[type=text]");
-    lightCavalryOnB = await awaitForSelector("#content_value > div:nth-child(3) > div > form > table > tbody > tr:nth-child(4) > td:nth-child(8) > input[type=text]");
+    lightCavalryOnA = await awaitForSelector("#content_value > div:nth-child(5) > div > form > table > tbody > tr:nth-child(2) > td:nth-child(7) > input[type=text]");
+    lightCavalryOnB = await awaitForSelector("#content_value > div:nth-child(5) > div > form > table > tbody > tr:nth-child(4) > td:nth-child(7) > input[type=text]");
   } catch ( error ) {
-    console.log(error);
     const hasRecaptcha = await awaitForRecaptcha(15);
 
     if (!hasRecaptcha) { //ocorreu erro porque se não tem recaptcha??
@@ -133,7 +135,14 @@ export const executeFarmScreen = async() => {
           await delay(500);
         }
         resolve();
-      })
+      }).catch(error =>
+        { 
+          console.log(err);
+
+          setTimeout(() => {
+            window.reload();
+          }, 10000)
+        });
     }
   }
 
@@ -157,34 +166,45 @@ export const executeFarmScreen = async() => {
 
       // #units_entry_all_ram
       const rams = document.getElementById("units_entry_all_ram").innerHTML.replace(/\D/g, '');
-      const lightCavalry = document.getElementById("units_entry_all_light").innerHTML.replace(/\D/g, '');
+      const barbaros = document.getElementById("units_entry_all_axe").innerHTML.replace(/\D/g, '');
 
       const necessaryRams = Number(wallLevel) * 3 + Number(wallLevel);
-      const necessaryLightCavalry = Number(wallLevel) * 3;
+      const necessaryBarbaros = 50;
 
-      if ((Number(rams) < necessaryRams) || (Number(lightCavalry) < necessaryLightCavalry)) {
+      if ((Number(rams) < necessaryRams) || (Number(barbaros) < necessaryBarbaros)) {
         const closeButton = await awaitForSelector(".popup_box_close");
         closeButton.click();
         return;
       }
       
-      const lightCavalryInput = document.getElementById("unit_input_light");
+      const barbarosInput = document.getElementById("unit_input_axe");
       const ramsInput = document.getElementById("unit_input_ram");
 
-      lightCavalryInput.value = necessaryLightCavalry;
+      barbarosInput.value = necessaryBarbaros;
       ramsInput.value = necessaryRams;
+      
+      await delay(300);
 
       const attackButton = document.getElementById("target_attack");
       attackButton.click();
 
+      await delay(300);
+      
       const confirmAttack = await awaitForSelector("#troop_confirm_submit");
       confirmAttack.click();
-      lightCavalryQuantity = lightCavalryQuantity - necessaryLightCavalry;
-      await awaitForSelectorToDisappear("#popup_box_popup_command")
+
+      await awaitForSelectorToDisappear("#popup_box_popup_command");
+      await delay(100);
       return;
     }
 
-    const isPrevFarmFull = row.children[2].children[0].src.indexOf('max_loot/1.png') >= 0 ? true : false;
+    let isPrevFarmFull = false;
+    try {
+      isPrevFarmFull = row.children[2].children[0].src.indexOf('max_loot/1.png') >= 0 ? true : false;
+    }
+    catch (error) {
+      isPrevFarmFull = false;
+    }
 
     //Se não tiver sido full, mandar ataque A.
     if (!isPrevFarmFull) {
