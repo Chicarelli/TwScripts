@@ -223,7 +223,7 @@ export const executeFarmScreen = async() => {
       return acc + totalResources;
     }, 0);
 
-    if (totalResources > 3500) {
+    if (totalResources > 5000) {
       console.log('new feature');
       //add custom attack to farm all possible resources. 
       let necessaryCavalry =  Math.floor((totalResources * 0.7) / 80); 
@@ -252,7 +252,10 @@ export const executeFarmScreen = async() => {
           necessaryHeavy = 20;
         }
 
-          const heavyToInput = heavy < necessaryHeavy ? heavy : necessaryHeavy;
+          let heavyToInput = heavy < necessaryHeavy ? heavy : necessaryHeavy;
+          if (heavyToInput > 150) {
+            heavyToInput = 200;
+          }
 
           const spyInput = document.getElementById('unit_input_spy');
           const heavyInput = document.getElementById('unit_input_heavy');
@@ -284,7 +287,15 @@ export const executeFarmScreen = async() => {
         return;
       }
 
-      const lightToInput = light < necessaryCavalry ? light : necessaryCavalry;
+      let lightToInput = light < necessaryCavalry ? light : necessaryCavalry;
+
+      if (Number(lightToInput) > 300) {
+        lightToInput = MathFloor(Number(lightToInput) * .8);
+      }
+
+      if (Number(lightToInput) > 300) {
+        lightToInput = 300;
+      }
 
       const spyInput = document.getElementById('unit_input_spy');
       const lightInput = document.getElementById('unit_input_light');
